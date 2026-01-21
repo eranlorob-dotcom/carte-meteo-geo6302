@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>GEO 6302 - Données Réelles de Vent</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; width: 100%; background: #262626; }
+        body { margin: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 1. Initialisation de la carte
+        var map = L.map('map').setView([45.7, -74.0], 6);
+
+        var dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© CartoDB'
+        }).addTo(map);
+
+        // 2. Couche Réelle : Vitesse du vent (Couleurs/Points chauds)
+        // Source: GéoMet - Modèle GDPS
+        var ventVitesse = L.tileLayer.wms("https://geo.weather.gc.ca/geomet", {
+            layers: 'GDPS.ETA_WNDSPRD',
+            format: 'image/png',
+            transparent: true,
+            opacity: 0.6,
+            version: '1.3.0',
+            attribution: "Environnement Canada"
+        }).addTo(map);
+
+        // 3. Couche Réelle : Direction du vent (Barbules/Flèches)
+        var ventDirection = L.tileLayer.wms("https://geo.weather.gc.ca/geomet", {
+            layers: 'GDPS.ETA_WNDBARB',
+            format: 'image/png',
+            transparent: true,
+            version: '1.3.0',
+            attribution: "Environnement Canada"
+        }).addTo(map);
+
+        // 4. Menu de contrôle
+        var baseMaps = { "Mode Sombre": dark };
+        var overlays = {
+            "Vitesse du vent (GDPS)": ventVitesse,
+            "Direction (Barbules)": ventDirection
+        };
+
+        L.control.layers(baseMaps, overlays, { collapsed: false }).addTo(map);
+
+    </script>
+</body>
+</html>
